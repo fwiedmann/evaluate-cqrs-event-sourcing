@@ -29,5 +29,18 @@ services:
       - 8080
     depends_on:
       - nats
+  user-query:
+    build:
+      context: "services/user-query"
+      dockerfile: "Dockerfile"
+    labels:
+      - "traefik.http.routers.user-query.rule=Host(`localhost`) && Method(`GET`) && PathPrefix(`/users`)"
+    volumes:
+      - userquery:/data/user-query
+    expose:
+      - 8080
+    depends_on:
+      - nats
 volumes:
   usercommand:
+  userquery:

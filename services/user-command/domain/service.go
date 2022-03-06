@@ -31,12 +31,18 @@ const (
 	DeleteCommand = "userDelete"
 )
 
+const (
+	CreateEvent = "userCreated"
+	UpdateEvent = "userUpdated"
+	DeleteEvent = "userDeleted"
+)
+
 func (us *UserService) Create(user CreateUser) (User, error) {
 	u, err := NewUser(user.Name, user.Surname)
 	if err != nil {
 		return User{}, err
 	}
-	return us.storeAndPublish(CreateCommand, "userCreated", u)
+	return us.storeAndPublish(CreateCommand, CreateEvent, u)
 }
 
 type UpdateUser struct {
@@ -56,14 +62,14 @@ func (us *UserService) Update(user UpdateUser) (User, error) {
 		return User{}, err
 	}
 
-	return us.storeAndPublish("userUpdate", "userUpdated", u)
+	return us.storeAndPublish(UpdateCommand, UpdateEvent, u)
 }
 
 func (us *UserService) Delete(id string) error {
 	u := User{
 		Id: id,
 	}
-	_, err := us.storeAndPublish(UpdateCommand, "userDeleted", u)
+	_, err := us.storeAndPublish(DeleteCommand, DeleteEvent, u)
 	return err
 }
 
@@ -73,7 +79,7 @@ func (us *UserService) storeAndPublish(command, eventKind string, user User) (Us
 		return User{}, err
 	}
 
-	if err := us.eventBus.PublishEvent("", user); err != nil {
+	if err := us.eventBus.PublishEvent(eventKind, user); err != nil {
 		return User{}, err
 	}
 	return user, nil
