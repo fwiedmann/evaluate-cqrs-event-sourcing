@@ -7,6 +7,7 @@ type UserRepository interface {
 	Find() ([]User, error)
 
 	Create(user User) error
+	CreateHistoryEntry(user User) error
 	Update(user User) error
 	Delete(id string) error
 }
@@ -68,9 +69,19 @@ func (us *UserService) eventHandler(e Event) error {
 		if err != nil {
 			return err
 		}
+		err = us.repo.CreateHistoryEntry(e.User)
+		if err != nil {
+			fmt.Printf(err.Error())
+			return err
+		}
 	case UpdateEvent:
 		fmt.Println(e.Kind)
 		err := us.repo.Update(e.User)
+		if err != nil {
+			fmt.Printf(err.Error())
+			return err
+		}
+		err = us.repo.CreateHistoryEntry(e.User)
 		if err != nil {
 			fmt.Printf(err.Error())
 			return err
