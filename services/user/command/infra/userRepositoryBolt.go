@@ -3,13 +3,14 @@ package infra
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user-command/domain"
+	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user/command/domain"
+	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user/core"
 	"go.etcd.io/bbolt"
 	"time"
 )
 
 func NewUserRepositoryBoltDB() *UserRepositoryBoltDB {
-	db, err := bbolt.Open("/data/user-command/db.bolt", 0777, bbolt.DefaultOptions)
+	db, err := bbolt.Open("/data/command/db.bolt", 0777, bbolt.DefaultOptions)
 	if err != nil {
 		panic(err)
 	}
@@ -29,7 +30,7 @@ type BoltDBUser struct {
 	Surname   string `json:"surname"`
 }
 
-func (u *UserRepositoryBoltDB) Append(command string, user domain.User) error {
+func (u *UserRepositoryBoltDB) Append(command string, user core.User) error {
 	return u.db.Update(func(tx *bbolt.Tx) error {
 
 		var bucket *bbolt.Bucket

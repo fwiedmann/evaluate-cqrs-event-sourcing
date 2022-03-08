@@ -2,17 +2,18 @@ package main
 
 import (
 	"fmt"
-	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user-query/domain"
-	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user-query/infra"
+	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user/query/domain"
+	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user/query/infra"
 	"net/http"
 )
 
 func main() {
-	_, err := domain.NewUserService(infra.NewUserRepositoryBoltDB(), infra.NewEventBusNats())
+	service, err := domain.NewUserService(infra.NewUserRepositoryBoltDB())
 	if err != nil {
 		panic(err)
 	}
 
+	infra.NewEventBusNats(service).Subscribe()
 	//handler := infra.HttpUserHandler{
 	//	UserService: service,
 	//}

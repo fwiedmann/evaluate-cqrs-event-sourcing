@@ -1,8 +1,6 @@
-package domain
+package core
 
-import (
-	"github.com/google/uuid"
-)
+import "github.com/google/uuid"
 
 func NewUser(name, surname string) (User, error) {
 	user := User{

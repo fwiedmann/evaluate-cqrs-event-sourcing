@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user-command/domain"
-	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user-command/infra"
+	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user/command/domain"
+	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user/command/infra"
 	"github.com/gorilla/mux"
 	"net/http"
 )

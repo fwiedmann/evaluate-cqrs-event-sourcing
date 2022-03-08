@@ -19,24 +19,24 @@ services:
     command: "--cluster_name NATS --http_port 8222"
   user-command:
     build:
-      context: "services/user-command"
-      dockerfile: "Dockerfile"
+      context: "services/user"
+      dockerfile: "command.Dockerfile"
     labels:
-      - "traefik.http.routers.user-command.rule=Host(`localhost`) && Method(`POST`) && PathPrefix(`/users`)"
+      - "traefik.http.routers.command.rule=Host(`localhost`) && Method(`POST`) && PathPrefix(`/users`)"
     volumes:
-      - usercommand:/data/user-command
+      - usercommand:/data/command
     expose:
       - 8080
     depends_on:
       - nats
   user-query:
     build:
-      context: "services/user-query"
-      dockerfile: "Dockerfile"
+      context: "services/user"
+      dockerfile: "query.Dockerfile"
     labels:
-      - "traefik.http.routers.user-query.rule=Host(`localhost`) && Method(`GET`) && PathPrefix(`/users`)"
+      - "traefik.http.routers.query.rule=Host(`localhost`) && Method(`GET`) && PathPrefix(`/users`)"
     volumes:
-      - userquery:/data/user-query
+      - userquery:/data/query
     expose:
       - 8080
     depends_on:

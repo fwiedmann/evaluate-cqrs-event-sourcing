@@ -3,7 +3,7 @@ package infra
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user-command/domain"
+	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user/command/domain"
 	"github.com/gorilla/mux"
 	"net/http"
 )

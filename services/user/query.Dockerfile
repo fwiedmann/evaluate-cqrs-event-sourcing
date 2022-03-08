@@ -8,12 +8,12 @@ FROM golang:1.17-buster AS build
 WORKDIR /app
 
 
-COPY ./ ./
+COPY . ./
 RUN go mod download
 
 RUN ls -lisa
 
-RUN CGO_ENABLED=0 go build -o /user-command
+RUN CGO_ENABLED=0 go build -o /query query/main.go
 
 ##
 ## Deploy
@@ -22,6 +22,6 @@ FROM alpine:3.15.0
 
 WORKDIR /
 
-COPY --from=build /user-command /user-command
+COPY --from=build /query /user-query
 
-ENTRYPOINT ["/user-command"]
+ENTRYPOINT ["/user-query"]

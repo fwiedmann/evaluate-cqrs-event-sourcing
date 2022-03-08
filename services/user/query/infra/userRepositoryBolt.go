@@ -3,7 +3,7 @@ package infra
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user-query/domain"
+	"github.com/fwiedmann/evaluate-cqrs-event-sourcing/services/user/core"
 	"go.etcd.io/bbolt"
 	"time"
 )
@@ -11,7 +11,7 @@ import (
 const boltUserBucket = "users"
 
 func NewUserRepositoryBoltDB() *UserRepositoryBoltDB {
-	db, err := bbolt.Open("/data/user-query/db.bolt", 0777, bbolt.DefaultOptions)
+	db, err := bbolt.Open("/data/query/db.bolt", 0777, bbolt.DefaultOptions)
 	if err != nil {
 		panic(err)
 	}
@@ -22,7 +22,7 @@ type UserRepositoryBoltDB struct {
 	db *bbolt.DB
 }
 
-func (u *UserRepositoryBoltDB) CreateHistoryEntry(user domain.User) error {
+func (u *UserRepositoryBoltDB) CreateHistoryEntry(user core.User) error {
 	return u.db.Update(func(tx *bbolt.Tx) error {
 		userHistoryBucket, err := tx.CreateBucketIfNotExists([]byte(user.Id))
 		if err != nil {
@@ -55,7 +55,7 @@ func (u *UserRepositoryBoltDB) CreateHistoryEntry(user domain.User) error {
 	})
 }
 
-func (u *UserRepositoryBoltDB) FindById(id string) (domain.User, error) {
+func (u *UserRepositoryBoltDB) FindById(id string) (core.User, error) {
 	var user BoltDBUser
 	err := u.db.View(func(tx *bbolt.Tx) error {
 
@@ -73,7 +73,7 @@ func (u *UserRepositoryBoltDB) FindById(id string) (domain.User, error) {
 		}
 		return nil
 	})
-	return domain.User{
+	return core.User{
 		Id:      user.Id,
 		Name:    user.Name,
 		Surname: user.Surname,
@@ -81,8 +81,8 @@ func (u *UserRepositoryBoltDB) FindById(id string) (domain.User, error) {
 
 }
 
-func (u *UserRepositoryBoltDB) Find() ([]domain.User, error) {
-	users := make([]domain.User, 0)
+func (u *UserRepositoryBoltDB) Find() ([]core.User, error) {
+	users := make([]core.User, 0)
 	err := u.db.View(func(tx *bbolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte(boltUserBucket))
 		if err != nil {
@@ -94,7 +94,7 @@ func (u *UserRepositoryBoltDB) Find() ([]domain.User, error) {
 			if err := json.Unmarshal(v, &user); err != nil {
 				return err
 			}
-			users = append(users, domain.User{
+			users = append(users, core.User{
 				Id:      user.Id,
 				Name:    user.Name,
 				Surname: user.Surname,
@@ -107,7 +107,7 @@ func (u *UserRepositoryBoltDB) Find() ([]domain.User, error) {
 	return users, err
 }
 
-func (u *UserRepositoryBoltDB) Create(user domain.User) error {
+func (u *UserRepositoryBoltDB) Create(user core.User) error {
 	return u.db.Update(func(tx *bbolt.Tx) error {
 		usersBucket, err := tx.CreateBucketIfNotExists([]byte(boltUserBucket))
 		if err != nil {
@@ -134,7 +134,7 @@ func (u *UserRepositoryBoltDB) Create(user domain.User) error {
 	})
 }
 
-func (u *UserRepositoryBoltDB) Update(user domain.User) error {
+func (u *UserRepositoryBoltDB) Update(user core.User) error {
 	return u.Create(user)
 }
 
